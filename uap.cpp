@@ -5,21 +5,20 @@
 
 using namespace std;
 
-#define compareBoxes(box1, box2, box3) ((board[box1] == board[box2]) && (board[box2] == board[box3]) && (board[box1] != 0)) //Checkes if three items are the same, and makes sure they're not 0's.
-#define numberToLetter(x) ((x > 0) ? (x == 1) ? 'X' : 'O' : ' ') //Takes the number and turns it into the letter or space.
+#define compareBoxes(box1, box2, box3) ((board[box1] == board[box2]) && (board[box2] == board[box3]) && (board[box1] != 0))
+#define numberToLetter(x) ((x > 0) ? (x == 1) ? 'X' : 'O' : ' ') 
 
 int getWinner(int board[9]) {
-	//Finds winner of game, if there is no winner, returns 0.
 	int winner = 0;
 	for (int x = 0; x < 3; x++) {
-		if (compareBoxes(3*x, 3*x+1, 3*x+2)) { //Chekcs rows.
+		if (compareBoxes(3*x, 3*x+1, 3*x+2)) { // Cek rows.
 			winner = board[3*x];
 			break;
-		} else if (compareBoxes(x, x+3, x+6)) { //Checks columns.
+		} else if (compareBoxes(x, x+3, x+6)) { //Cek columns.
 			winner = board[x];
 			break;
 
-		} else if (compareBoxes(2*x, 4, 8-2*x) && (x < 2)) { //Checks diagonals. Doesn't check if x == 2.
+		} else if (compareBoxes(2*x, 4, 8-2*x) && (x < 2)) { 
 			winner = board[4];
 			break;
 		}
@@ -27,7 +26,6 @@ int getWinner(int board[9]) {
 	return winner;
 }
 bool gameOver(int board[9]){
-	//Checks if game is over, and announces who won, or if it was a tie.
 	int winner = getWinner(board);
 	if (winner > 0) {
 		cout << numberToLetter(winner) << " wins!"<< endl;
@@ -41,7 +39,7 @@ bool gameOver(int board[9]){
 }
 
 int willWin(int board[9], int player) {
-	//Checks if a given player could win in the next plank.
+	
 	for (int x = 0; x < 9; x++) {
 		int tempBoard[9];
 		memcpy(tempBoard, board, 36);
@@ -53,8 +51,7 @@ int willWin(int board[9], int player) {
 }
 
 int exceptionalCase(int board[9]) {
-	//Finds bords that are exceptions to how the algorithm works.
-	int cases[2][9] = {{1,0,0,0,2,0,0,0,1}, {0,1,0,1,2,0,0,0,0}}; //Boards that don't work with algorithm.
+	int cases[2][9] = {{1,0,0,0,2,0,0,0,1}, {0,1,0,1,2,0,0,0,0}}; 
 	int answers[2][4] = {{3,3,3,3}, {2,8,6,0}};
 	int rotatedBoard[9] = {6,3,0,7,4,1,8,5,2};
 	int newBoard[9];
@@ -68,7 +65,7 @@ int exceptionalCase(int board[9]) {
 				tempBoard[x] = newBoard[x];
 			
 			int match = 0;
-			//Rotates board so it works with different versions of the same board.
+			
 			for (int box = 0; box < 9; box++) {
 				newBoard[box] = tempBoard[rotatedBoard[box]];
 			}
@@ -84,7 +81,6 @@ int exceptionalCase(int board[9]) {
 }
 
 int getSpace(int board[9], int spaces[4]) {
-	//Gets a random corner or side that's not taken.
 	bool isSpaceEmpty = false;
 	int y;
 	for (int x = 0; x < 4; x++) {
@@ -112,7 +108,7 @@ void outputBoard(int board[9]) {
 }
 
 int main(){
-	int board[9] = {0,0,0,0,0,0,0,0,0}; //Starts empty board.
+	int board[9] = {0,0,0,0,0,0,0,0,0}; 
 	int possibleWinner;
 	int move;
 	bool isInvalid;
@@ -124,7 +120,6 @@ int main(){
 	cout << "1|2|3\n-----\n4|5|6\n-----\n7|8|9\n\n";
 
 	while (true) {
-		//Player X decides what move they'll do.
 		do {
 			cout << "X: ";
 			getline(cin, moveString);
@@ -139,13 +134,11 @@ int main(){
 			}
 		} while (isInvalid);
 
-		//Decides whether or not the game continues.
 		if (gameOver(board) > 0) {
 			outputBoard(board);
 			break;
 		}
 
-		//Player O decides which move they'll do.
 		bool good = false;
 		for (int x = 2; x > 0; x--){
 			possibleWinner = willWin(board, x);
@@ -156,15 +149,13 @@ int main(){
 			}
 		}
 		if (good);
-		else if (board[4] == 0) board[4] = 2; //Middle.
-		else if (exceptionalCase(board) > -1) board[exceptionalCase(board)] = 2; //Exception boards.
-		else if (getSpace(board, corners) != -1) board[getSpace(board, corners)] = 2; //Corners
-		else board[getSpace(board, sides)] = 2; //Sides
+		else if (board[4] == 0) board[4] = 2; 
+		else if (exceptionalCase(board) > -1) board[exceptionalCase(board)] = 2; 
+		else if (getSpace(board, corners) != -1) board[getSpace(board, corners)] = 2; 
+		else board[getSpace(board, sides)] = 2; 
 		
-		//Prints the board to the screen.
 		outputBoard(board);
 
-		//Decides whether or not the game continues.
 		if(gameOver(board)) break;
 
 	}
